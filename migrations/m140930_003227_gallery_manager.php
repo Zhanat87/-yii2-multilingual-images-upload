@@ -18,7 +18,7 @@ class m140930_003227_gallery_manager extends Migration
                 'type' => Schema::TYPE_STRING,
                 'ownerId' => Schema::TYPE_STRING . ' NOT NULL',
                 'rank' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0',
-                'name' => Schema::TYPE_STRING,
+                'name' => Schema::TYPE_STRING . '(2000)',
                 'description' => Schema::TYPE_TEXT
             )
         );

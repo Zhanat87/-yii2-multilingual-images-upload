@@ -107,6 +107,12 @@ class GalleryBehavior extends Behavior
     protected $_galleryId;
 
     /**
+     * contained application's languages
+     * @var array
+     */
+    public $languages;
+
+    /**
      * @param ActiveRecord $owner
      */
     public function attach($owner)
@@ -160,6 +166,11 @@ class GalleryBehavior extends Behavior
         }
     }
 
+    /**
+     * array of current images
+     *
+     * @var GalleryImage[]
+     */
     protected $_images = null;
 
     /**
@@ -394,9 +405,54 @@ class GalleryBehavior extends Behavior
      */
     public function updateImagesData($imagesData)
     {
-        $imageIds = array_keys($imagesData);
+        /*
+         array (size=1)
+          6 =>
+            array (size=4)
+              'en' =>
+                array (size=1)
+                  'name' => string 'asd' (length=3)
+              'ru' =>
+                array (size=1)
+                  'name' => string 'asd2' (length=4)
+              'ja' =>
+                array (size=1)
+                  'name' => string 'asd3' (length=4)
+              'zh' =>
+                array (size=1)
+                  'name' => string 'asd4' (length=4)
+         */
+//        var_dump($imagesData);
+//        exit;
+//        foreach ($imagesData as $id => $item) {
+//            $names = [];
+//            foreach ($item as $language => $v) {
+//                $names[$language] = $v['name'];
+//            }
+//            \Yii::$app->db->createCommand()
+//                ->update(
+//                    $this->behavior->tableName,
+//                    ['name' => serialize($names)],
+//                    ['id' => $id]
+//                )->execute();
+//        }
+        /*
+         * ['id' => ['name' => 'imageName', 'description' => 'some text']]
+         */
+//        $imageIds = array_keys($imagesData);
+        // соберем id'и и имена этих картинок
+        $imageIds = $imagesWithData = [];
+        foreach ($imagesData as $id => $item) {
+            $imageIds[] = $id;
+            foreach ($item as $language => $v) {
+                $imagesWithData[$id]['name'][$language] = $v['name'];
+            }
+        }
         $imagesToUpdate = [];
+        // fill array of images for update
         if ($this->_images !== null) {
+            // заполняет этот массив картинками, которые уже есть и ключи, которых пришли в post'е
+            // если это редактирование, то это одна картинка
             $selected = array_combine($imageIds, $imageIds);
             foreach ($this->_images as $img) {
                 if (isset($selected[$img->id])) {
@@ -404,6 +460,8 @@ class GalleryBehavior extends Behavior
                 }
             }
         } else {
+            // иначе выбирает картинки из бд, только те которые пришли в post'е
+            // если это редактирование, то это одна картинка
             $rawImages = (new Query())
                 ->select(['id', 'name', 'description', 'rank'])
                 ->from($this->tableName)
@@ -417,17 +475,28 @@ class GalleryBehavior extends Behavior
         }
 
 
+//        foreach ($imagesToUpdate as $image) {
+//            if (isset($imagesData[$image->id]['name'])) {
+//                $image->name = $imagesData[$image->id]['name'];
+//            }
+//            if (isset($imagesData[$image->id]['description'])) {
+//                $image->description = $imagesData[$image->id]['description'];
+//            }
+//            \Yii::$app->db->createCommand()
+//                ->update(
+//                    $this->tableName,
+//                    ['name' => $image->name, 'description' => $image->description],
+//                    ['id' => $image->id]
+//                )->execute();
+//        }
         foreach ($imagesToUpdate as $image) {
-            if (isset($imagesData[$image->id]['name'])) {
-                $image->name = $imagesData[$image->id]['name'];
-            }
-            if (isset($imagesData[$image->id]['description'])) {
-                $image->description = $imagesData[$image->id]['description'];
+            if (isset($imagesWithData[$image->id]['name'])) {
+                $image->name = serialize($imagesWithData[$image->id]['name']);
             }
             \Yii::$app->db->createCommand()
                 ->update(
                     $this->tableName,
-                    ['name' => $image->name, 'description' => $image->description],
+                    ['name' => $image->name],
                     ['id' => $image->id]
                 )->execute();
         }

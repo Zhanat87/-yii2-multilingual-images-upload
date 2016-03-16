@@ -63,7 +63,8 @@ class GalleryManager extends Widget
             $images[] = array(
                 'id' => $image->id,
                 'rank' => $image->rank,
-                'name' => (string)$image->name,
+                'name' => $image->name ? unserialize($image->name) : null,
+                'names' => $image->name ? unserialize($image->name) : null,
                 'description' => (string)$image->description,
                 'preview' => $image->getUrl('preview'),
             );
@@ -86,6 +87,8 @@ class GalleryManager extends Widget
             'nameLabel' => Yii::t('galleryManager/main', 'Name'),
             'descriptionLabel' => Yii::t('galleryManager/main', 'Description'),
             'photos' => $images,
+            'languages' => $this->behavior->languages,
+            'language' => mb_substr(Yii::$app->language, 0, 2),
         );
 
         $opts = Json::encode($opts);

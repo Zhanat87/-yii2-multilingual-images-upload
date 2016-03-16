@@ -162,10 +162,20 @@ class GalleryManagerAction extends Action
         $images = $this->behavior->updateImagesData($imagesData);
         $resp = array();
         foreach ($images as $model) {
+            // подправить имя
+            $name = '';
+            $names = [];
+            if ($model->name) {
+                $names = unserialize($model->name);
+                foreach ($names as $language => $value) {
+                    $name .= $language . ': ' . $value . ', ';
+                }
+            }
             $resp[] = array(
                 'id' => $model->id,
                 'rank' => $model->rank,
-                'name' => (string)$model->name,
+                'name' => $name ? rtrim($name, ', ') : null,
+                'names' => $names, // массив с именами по языкам
                 'description' => (string)$model->description,
                 'preview' => $model->getUrl('preview'),
             );

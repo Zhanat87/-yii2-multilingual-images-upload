@@ -16,7 +16,10 @@
     updateUrl: '',
     arrangeUrl: '',
 
-    photos: []
+    photos: [],
+
+    languages: [],
+    language: ''
   };
 
   function galleryManager(el, options) {
@@ -54,18 +57,42 @@
 
     function createEditorElement(id, src, name, description) {
 
+      if (opts.languages) {
+        var namesHtml = '';
+        opts.languages.forEach(function (language) {
+          var languageName = '';
+          opts.photos.forEach(function (photo) {
+            if (photo.id == id) {
+              languageName = photo.names[language];
+            }
+          });
+          namesHtml += '<div class="form-group">' +
+              '<label class="control-label" for="photo_name_' + language + '_' + id + '">' + opts.nameLabel + ' (' + language + '):</label>' +
+              '<input class="form-control" type="text" name="photo[' + id + '][' + language + '][name]" class="input-xlarge" value="' +
+              htmlEscape(languageName) + '" id="photo_name_' + language + '_' + id + '"/>' + '</div>';
+        });
+      } else {
+        var namesHtml = opts.hasName ?
+          '<div class="form-group">' +
+          '<label class="control-label" for="photo_name_' + id + '">' + opts.nameLabel + ':</label>' +
+          '<input class="form-control" type="text" name="photo[' + id + '][name]" class="input-xlarge" value="' +
+          htmlEscape(name) + '" id="photo_name_' + id + '"/>' + '</div>' : '';
+      }
+
       var html = '<div class="photo-editor row">' +
         '<div class="col-xs-4">' +
         '<img src="' + htmlEscape(src) + '"  style="max-width:100%;">' +
         '</div>' +
         '<div class="col-xs-8">' +
 
-        (opts.hasName
-          ?
-        '<div class="form-group">' +
-        '<label class="control-label" for="photo_name_' + id + '">' + opts.nameLabel + ':</label>' +
-        '<input class="form-control" type="text" name="photo[' + id + '][name]" class="input-xlarge" value="' + htmlEscape(name) + '" id="photo_name_' + id + '"/>' +
-        '</div>' : '') +
+          namesHtml
+        //(opts.hasName
+        //  ?
+        //'<div class="form-group">' +
+        //'<label class="control-label" for="photo_name_' + id + '">' + opts.nameLabel + ':</label>' +
+        //'<input class="form-control" type="text" name="photo[' + id + '][name]" class="input-xlarge" value="' + htmlEscape(name) + '" id="photo_name_' + id + '"/>' +
+        //'</div>' : '')
+          +
 
         (opts.hasDesc
           ?
@@ -115,6 +142,7 @@
     }
 
 
+    // текущие фото править
     function editPhotos(ids) {
       var l = ids.length;
       var form = $editorForm.empty();
@@ -333,12 +361,20 @@
       });
     }
 
+    // сохранить изменения в модальном окне
     $('.save-changes', $editorModal).click(function (e) {
       e.preventDefault();
       $.post(opts.updateUrl, $('input, textarea', $editorForm).serialize() + csrfParams, function (data) {
+
+        // здесь приходит ответ после загрузки GalleryManagerAction::actionChangeData
+        // теперь надо добавить в глобальные фото пришедшее новое фото
+
+        //console.log(opts.photos);
         var count = data.length;
         for (var key = 0; key < count; key++) {
           var p = data[key];
+          opts.photos.push(p);
+          //console.log(p);
           var photo = photos[p.id];
           $('img', photo).attr('src', p['src']);
           if (opts.hasName)
@@ -346,6 +382,7 @@
           if (opts.hasDesc)
             $('.caption p', photo).text(p['description']);
         }
+        //console.log(opts.photos);
         $editorModal.modal('hide');
         //deselect all items after editing
         $('.photo.selected', $sorter).each(function () {
@@ -392,7 +429,16 @@
 
     for (var i = 0, l = opts.photos.length; i < l; i++) {
       var resp = opts.photos[i];
-      addPhoto(resp['id'], resp['preview'], resp['name'], resp['description'], resp['rank']);
+      // переделаем показ имени фото
+      var imageName = '';
+      opts.languages.forEach(
+          function(language) {
+            if (resp['name'][language].length) {
+              imageName += language + ': ' + resp['name'][language] + ', ';
+            }
+          }
+      );
+      addPhoto(resp['id'], resp['preview'], imageName.substr(0, imageName.length -2), resp['description'], resp['rank']);
     }
   }
 
