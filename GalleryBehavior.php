@@ -1,6 +1,6 @@
 <?php
 
-namespace zxbodya\yii2\galleryManager;
+namespace zhanat\yii2\galleryManager;
 
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
@@ -13,7 +13,7 @@ use yii\imagine\Image;
 /**
  * Behavior for adding gallery to any model.
  *
- * @author Bogdan Savluk <savluk.bogdan@gmail.com>
+ * @author Iskakov Zhanat <iskakov_zhanat@mail.ru>
  *
  * @property string $galleryId
  */

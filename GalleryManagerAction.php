@@ -1,6 +1,6 @@
 <?php
 
-namespace zxbodya\yii2\galleryManager;
+namespace zhanat\yii2\galleryManager;
 
 
 use Yii;
@@ -18,7 +18,7 @@ use yii\web\UploadedFile;
  *  - Arrange images in gallery
  *  - Changing name/description associated with image
  *
- * @author Bogdan Savluk <savluk.bogdan@gmail.com>
+ * @author Iskakov Zhanat <iskakov_zhanat@mail.ru>
  */
 class GalleryManagerAction extends Action
 {

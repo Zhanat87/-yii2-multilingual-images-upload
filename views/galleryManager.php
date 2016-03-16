@@ -2,7 +2,7 @@
 /**
  * @var $this View
  *
- * @author Bogdan Savluk <savluk.bogdan@gmail.com>
+ * @author Iskakov Zhanat <iskakov_zhanat@mail.ru>
  */
 use yii\helpers\Html;
 use yii\web\View;

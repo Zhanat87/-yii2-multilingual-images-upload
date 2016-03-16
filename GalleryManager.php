@@ -1,6 +1,6 @@
 <?php
 
-namespace zxbodya\yii2\galleryManager;
+namespace zhanat\yii2\galleryManager;
 
 use Yii;
 use yii\base\Exception;
@@ -13,7 +13,7 @@ use yii\helpers\Url;
  * Widget to manage gallery.
  * Requires Twitter Bootstrap styles to work.
  *
- * @author Bogdan Savluk <savluk.bogdan@gmail.com>
+ * @author Iskakov Zhanat <iskakov_zhanat@mail.ru>
  */
 class GalleryManager extends Widget
 {
