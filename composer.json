@@ -1,0 +1,29 @@
+{
+    "name": "zhanat/yii2-multilingual-images-upload",
+    "description": "Extension for yii2, that allows to manage multilingual image galleries",
+    "type": "yii2-extension",
+    "keywords": [
+        "yii2",
+        "extension",
+        "multilingual",
+        "image",
+        "gallery"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Iskakov Zhanat",
+            "email": "iskakov_zhanat@mail.ru"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2-jui": "*",
+        "yiisoft/yii2-imagine": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "zhanat\\yii2\\galleryManager\\": ""
+        }
+    }
+}
+
