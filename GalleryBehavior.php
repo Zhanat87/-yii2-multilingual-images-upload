@@ -9,6 +9,7 @@ use yii\base\Exception;
 use yii\db\ActiveRecord;
 use yii\db\Query;
 use yii\imagine\Image;
+use Yii;
 
 /**
  * Behavior for adding gallery to any model.
@@ -19,6 +20,7 @@ use yii\imagine\Image;
  */
 class GalleryBehavior extends Behavior
 {
+
     /**
      * Glue used to implode composite primary keys
      * @var string

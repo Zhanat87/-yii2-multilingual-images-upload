@@ -10,7 +10,11 @@ use yii\web\View;
 ?>
 <?php echo Html::beginTag('div', $this->context->options); ?>
     <!-- Gallery Toolbar -->
-
+    <div class="translateDiv" style="display: none;"
+         delete-all="<?php echo Yii::t('galleryManager/main', 'Are you sure you want to delete these images?'); ?>"
+         delete-single="<?php echo Yii::t('galleryManager/main', 'Are you sure you want to delete this image?'); ?>"
+         yes="<?php echo Yii::t('galleryManager/main', 'Yes'); ?>"
+         no="<?php echo Yii::t('galleryManager/main', 'No'); ?>" ></div>
     <div class="btn-toolbar" style="padding:4px">
         <div class="btn-group" style="display: inline-block;">
             <div class="btn btn-success btn-file" style="display: inline-block">

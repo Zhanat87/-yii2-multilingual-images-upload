@@ -1,6 +1,13 @@
 (function ($) {
   'use strict';
 
+  var languagesWithFlags = {
+    en: 'gb',
+    ru: 'ru',
+    ja: 'jp',
+    zh: 'cn'
+  };
+
   var galleryDefaults = {
     csrfToken: $('meta[name=csrf-token]').attr('content'),
     csrfTokenName: $('meta[name=csrf-param]').attr('content'),
@@ -62,14 +69,17 @@
         opts.languages.forEach(function (language) {
           var languageName = '';
           opts.photos.forEach(function (photo) {
-            if (photo.id == id) {
+            console.log(photo);
+            if (photo.id == id && photo.names !== null) {
               languageName = photo.names[language];
             }
           });
-          namesHtml += '<div class="form-group">' +
-              '<label class="control-label" for="photo_name_' + language + '_' + id + '">' + opts.nameLabel + ' (' + language + '):</label>' +
-              '<input class="form-control" type="text" name="photo[' + id + '][' + language + '][name]" class="input-xlarge" value="' +
-              htmlEscape(languageName) + '" id="photo_name_' + language + '_' + id + '"/>' + '</div>';
+          namesHtml += '<div class="form-group"><div class="input-group">' +
+              '<span class="input-group-addon" data-toggle="tooltip" title="' + opts.nameLabel + ' (' + language +
+              ')"><span class="flag-icon flag-icon-' + languagesWithFlags[language] + '"></span></span>' +
+              '<input class="form-control" type="text" name="photo[' + id + '][' + language +
+              '][name]" class="input-xlarge" value="' +
+              htmlEscape(languageName) + '" id="photo_name_' + language + '_' + id + '"/>' + '</div></div>';
         });
       } else {
         var namesHtml = opts.hasName ?
@@ -179,12 +189,25 @@
 
 
     function deleteClick(e) {
+      var $this = $(this);
+      var $translateDiv = $('.translateDiv');
+      swal({
+        title: $translateDiv.attr('delete-single'),
+        type: 'warning',
+        showCancelButton: true,
+        closeOnConfirm: true,
+        allowOutsideClick: true,
+        confirmButtonText: $translateDiv.attr('yes'),
+        cancelButtonText: $translateDiv.attr('no')
+      }, function() {
+        var photo = $this.closest('.photo');
+        var id = photo.data('id');
+        // here can be question to confirm delete
+        // if (!confirm(deleteConfirmation)) return false;
+        removePhotos([id]);
+      });
       e.preventDefault();
-      var photo = $(this).closest('.photo');
-      var id = photo.data('id');
-      // here can be question to confirm delete
-      // if (!confirm(deleteConfirmation)) return false;
-      removePhotos([id]);
+
       return false;
     }
 
@@ -405,12 +428,23 @@
     });
 
     $('.remove_selected', $gallery).click(function (e) {
-      e.preventDefault();
-      var ids = [];
-      $('.photo.selected', $sorter).each(function () {
-        ids.push($(this).data('id'));
+      var $translateDiv = $('.translateDiv');
+      swal({
+        title: $translateDiv.attr('delete-all'),
+        type: 'warning',
+        showCancelButton: true,
+        closeOnConfirm: true,
+        allowOutsideClick: true,
+        confirmButtonText: $translateDiv.attr('yes'),
+        cancelButtonText: $translateDiv.attr('no')
+      }, function() {
+        var ids = [];
+        $('.photo.selected', $sorter).each(function () {
+          ids.push($(this).data('id'));
+        });
+        removePhotos(ids);
       });
-      removePhotos(ids);
+      e.preventDefault();
 
     });
 
@@ -433,7 +467,7 @@
       var imageName = '';
       opts.languages.forEach(
           function(language) {
-            if (resp['name'][language].length) {
+            if (resp !== null && resp['name'] !== null && resp['name'][language].length) {
               imageName += language + ': ' + resp['name'][language] + ', ';
             }
           }

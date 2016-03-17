@@ -30,4 +30,8 @@ return [
     'Select all' => '',
     'Drop Files Here…' => '',
     'Uploading images…' => '',
+    'Are you sure you want to delete these images?' => '',
+    'Are you sure you want to delete this image?' => '',
+    'Yes' => '',
+    'No' => '',
 ];

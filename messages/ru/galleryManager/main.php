@@ -16,4 +16,8 @@ return [
     'Select all' => 'Выбрать все',
     'Drop Files Here…' => 'Перетащите файлы сюда…',
     'Uploading images…' => 'Картинки загружаются…',
+    'Are you sure you want to delete these images?' => 'Вы уверены в том, что хотите удалить эти изображения?',
+    'Are you sure you want to delete this image?' => 'Вы уверены в том, что хотите удалить данное изображение?',
+    'Yes' => 'Да',
+    'No' => 'Нет',
 ];
