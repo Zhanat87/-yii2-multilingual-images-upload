@@ -2,7 +2,6 @@
 
 namespace zhanat\yii2\galleryManager;
 
-
 use Yii;
 use yii\base\Action;
 use yii\db\ActiveRecord;
@@ -90,7 +89,11 @@ class GalleryManagerAction extends Action
      */
     protected function actionDelete($ids)
     {
-
+        $this->log(Yii::t('galleryManager/main', 'Remove images from {type} gallery with ids: {ids}',
+            [
+                'ids' => is_array($ids) ? join(',', $ids) : $ids,
+                'type' => $this->type,
+            ]));
         $this->behavior->deleteImages($ids);
 
         return 'OK';
@@ -114,6 +117,12 @@ class GalleryManagerAction extends Action
         // not "application/json", because  IE8 trying to save response as a file
 
         Yii::$app->response->headers->set('Content-Type', 'text/html');
+
+        $this->log(Yii::t('galleryManager/main', 'Upload image to {type} gallery with id: {id}',
+            [
+                'id' => $image->id,
+                'type' => $this->type,
+            ]));
 
         return Json::encode(
             array(
@@ -171,10 +180,18 @@ class GalleryManagerAction extends Action
                     $name .= $language . ': ' . $value . ', ';
                 }
             }
+            $name = $name ? rtrim($name, ', ') : null;
+            $this->log(Yii::t('galleryManager/main', 'Edit image in {type} gallery with id: {id}, set new name: {name}',
+                [
+                    'id' => $model->id,
+                    'type' => $this->type,
+                    'name' => $name,
+                ]));
+
             $resp[] = array(
                 'id' => $model->id,
                 'rank' => $model->rank,
-                'name' => $name ? rtrim($name, ', ') : null,
+                'name' => $name,
                 'names' => $names, // массив с именами по языкам
                 'description' => (string)$model->description,
                 'preview' => $model->getUrl('preview'),
@@ -183,4 +200,18 @@ class GalleryManagerAction extends Action
 
         return Json::encode($resp);
     }
+
+    private function log($message = '', $type = '')
+    {
+        $logging = new \common\models\mongodb\Logging();
+
+        // если в текущем методе не установлено сообщение, то дефолтное будет
+        $logging->message = $message;
+        $logging->type = $type ? : Yii::$app->controller->id;
+        $logging->controller = Yii::$app->controller->id;
+        $logging->action = Yii::$app->controller->action->id;
+
+        return $logging->insert();
+    }
+
 }

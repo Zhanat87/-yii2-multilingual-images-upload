@@ -34,4 +34,7 @@ return [
     'Are you sure you want to delete this image?' => '',
     'Yes' => '',
     'No' => '',
+    'Remove images from {type} gallery with ids: {ids}' => '',
+    'Upload image to {type} gallery with id: {id}' => '',
+    'Edit image in {type} gallery with id: {id}, set new name: {name}' => '',
 ];

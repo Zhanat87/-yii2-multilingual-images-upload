@@ -20,4 +20,7 @@ return [
     'Are you sure you want to delete this image?' => 'Вы уверены в том, что хотите удалить данное изображение?',
     'Yes' => 'Да',
     'No' => 'Нет',
+    'Remove images from {type} gallery with ids: {ids}' => 'Remove images from {type} gallery with ids: {ids}',
+    'Upload image to {type} gallery with id: {id}' => 'Upload image to {type} gallery with id: {id}',
+    'Edit image in {type} gallery with id: {id}, set new name: {name}' => 'Edit image in {type} gallery with id: {id}, set new name: {name}',
 ];
