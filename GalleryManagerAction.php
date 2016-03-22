@@ -89,11 +89,15 @@ class GalleryManagerAction extends Action
      */
     protected function actionDelete($ids)
     {
-        $this->log(Yii::t('galleryManager/main', 'Remove images from {type} gallery with ids: {ids}',
+        Yii::$app->logging->pub(
+            'Remove images from {type} gallery with ids: {ids}',
+            '',
+            'galleryManager/main',
             [
                 'ids' => is_array($ids) ? join(',', $ids) : $ids,
                 'type' => $this->type,
-            ]));
+            ]
+        );
         $this->behavior->deleteImages($ids);
 
         return 'OK';
@@ -118,11 +122,15 @@ class GalleryManagerAction extends Action
 
         Yii::$app->response->headers->set('Content-Type', 'text/html');
 
-        $this->log(Yii::t('galleryManager/main', 'Upload image to {type} gallery with id: {id}',
+        Yii::$app->logging->pub(
+            'Upload image to {type} gallery with id: {id}',
+            '',
+            'galleryManager/main',
             [
                 'id' => $image->id,
                 'type' => $this->type,
-            ]));
+            ]
+        );
 
         return Json::encode(
             array(
@@ -181,12 +189,16 @@ class GalleryManagerAction extends Action
                 }
             }
             $name = $name ? rtrim($name, ', ') : null;
-            $this->log(Yii::t('galleryManager/main', 'Edit image in {type} gallery with id: {id}, set new name: {name}',
+            Yii::$app->logging->pub(
+                'Edit image in {type} gallery with id: {id}, set new name: {name}',
+                '',
+                'galleryManager/main',
                 [
                     'id' => $model->id,
                     'type' => $this->type,
                     'name' => $name,
-                ]));
+                ]
+            );
 
             $resp[] = array(
                 'id' => $model->id,
@@ -199,19 +211,6 @@ class GalleryManagerAction extends Action
         }
 
         return Json::encode($resp);
-    }
-
-    private function log($message = '', $type = '')
-    {
-        $logging = new \common\models\mongodb\Logging();
-
-        // если в текущем методе не установлено сообщение, то дефолтное будет
-        $logging->message = $message;
-        $logging->type = $type ? : Yii::$app->controller->id;
-        $logging->controller = Yii::$app->controller->id;
-        $logging->action = Yii::$app->controller->action->id;
-
-        return $logging->insert();
     }
 
 }
