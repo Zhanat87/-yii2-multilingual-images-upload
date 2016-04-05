@@ -465,13 +465,15 @@
       var resp = opts.photos[i];
       // переделаем показ имени фото
       var imageName = '';
-      opts.languages.forEach(
-          function(language) {
-            if (resp !== null && resp['name'] !== null && resp['name'][language].length) {
-              imageName += language + ': ' + resp['name'][language] + ', ';
-            }
-          }
-      );
+      if (opts.languages) {
+          opts.languages.forEach(
+              function(language) {
+                  if (resp !== null && resp['name'] !== null && resp['name'][language].length) {
+                      imageName += language + ': ' + resp['name'][language] + ', ';
+                  }
+              }
+          );
+      }
       addPhoto(resp['id'], resp['preview'], imageName.substr(0, imageName.length -2), resp['description'], resp['rank']);
     }
   }
