@@ -8,7 +8,6 @@ use yii\base\Behavior;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
 use yii\db\Query;
-use yii\helpers\Url;
 use yii\imagine\Image;
 use Yii;
 
@@ -220,17 +219,15 @@ class GalleryBehavior extends Behavior
             return NULL;
         }
 
-        $url = [$this->url, 'file' => $this->getFileName($imageId, $version)];
         if (!empty($this->timeHash)) {
 
             $time = filemtime($path);
-//            $suffix = '?' . $this->timeHash . '=' . crc32($time);
-            $url[$this->timeHash] = crc32($time);
+            $suffix = '?' . $this->timeHash . '=' . crc32($time);
         } else {
-//            $suffix = '';
+            $suffix = '';
         }
 
-        return Url::to($url);
+        return $this->url . '/' . $this->getFileName($imageId, $version) . $suffix;
     }
 
     public function getFilePath($imageId, $version = 'original')
