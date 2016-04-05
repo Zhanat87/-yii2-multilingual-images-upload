@@ -8,6 +8,7 @@ use yii\base\Behavior;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
 use yii\db\Query;
+use yii\helpers\Url;
 use yii\imagine\Image;
 use Yii;
 
@@ -94,13 +95,13 @@ class GalleryBehavior extends Behavior
      * @var bool
      * @see GalleryManager::run
      */
-    public $hasName = true;
+    public $hasName = TRUE;
     /**
      * Used by GalleryManager
      * @var bool
      * @see GalleryManager::run
      */
-    public $hasDescription = true;
+    public $hasDescription = TRUE;
 
     /**
      * @var string Table name for saving gallery images meta information
@@ -121,12 +122,12 @@ class GalleryBehavior extends Behavior
     {
         parent::attach($owner);
         if (!isset($this->versions['original'])) {
-            $this->versions['original'] = function ($image) {
+            $this->versions['original'] = function($image) {
                 return $image;
             };
         }
         if (!isset($this->versions['preview'])) {
-            $this->versions['preview'] = function ($originalImage) {
+            $this->versions['preview'] = function($originalImage) {
                 /** @var ImageInterface $originalImage */
                 return $originalImage
                     ->thumbnail(new Box($this->previewWidth, $this->previewHeight));
@@ -138,8 +139,8 @@ class GalleryBehavior extends Behavior
     {
         return [
             ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete',
-            ActiveRecord::EVENT_AFTER_UPDATE => 'afterUpdate',
-            ActiveRecord::EVENT_AFTER_FIND => 'afterFind',
+            ActiveRecord::EVENT_AFTER_UPDATE  => 'afterUpdate',
+            ActiveRecord::EVENT_AFTER_FIND    => 'afterFind',
         ];
     }
 
@@ -173,14 +174,14 @@ class GalleryBehavior extends Behavior
      *
      * @var GalleryImage[]
      */
-    protected $_images = null;
+    protected $_images = NULL;
 
     /**
      * @return GalleryImage[]
      */
     public function getImages()
     {
-        if ($this->_images === null) {
+        if ($this->_images === NULL) {
             $query = new \yii\db\Query();
 
             $imagesData = $query
@@ -216,18 +217,20 @@ class GalleryBehavior extends Behavior
         $path = $this->getFilePath($imageId, $version);
 
         if (!file_exists($path)) {
-            return null;
+            return NULL;
         }
 
+        $url = [$this->url, 'file' => $this->getFileName($imageId, $version)];
         if (!empty($this->timeHash)) {
 
             $time = filemtime($path);
-            $suffix = '?' . $this->timeHash . '=' . crc32($time);
+//            $suffix = '?' . $this->timeHash . '=' . crc32($time);
+            $url[$this->timeHash] = crc32($time);
         } else {
-            $suffix = '';
+//            $suffix = '';
         }
 
-        return $this->url . '/' . $this->getFileName($imageId, $version) . $suffix;
+        return Url::to($url);
     }
 
     public function getFilePath($imageId, $version = 'original')
@@ -296,7 +299,7 @@ class GalleryBehavior extends Behavior
         $targetPath = implode('/', $parts);
         $path = realpath($targetPath);
         if (!$path) {
-            mkdir($targetPath, 0777, true);
+            mkdir($targetPath, 0777, TRUE);
         }
     }
 
@@ -326,11 +329,11 @@ class GalleryBehavior extends Behavior
         foreach ($imageIds as $imageId) {
             $this->deleteImage($imageId);
         }
-        if ($this->_images !== null) {
+        if ($this->_images !== NULL) {
             $removed = array_combine($imageIds, $imageIds);
             $this->_images = array_filter(
                 $this->_images,
-                function ($image) use (&$removed) {
+                function($image) use (&$removed) {
                     return !isset($removed[$image->id]);
                 }
             );
@@ -344,8 +347,8 @@ class GalleryBehavior extends Behavior
             ->insert(
                 $this->tableName,
                 [
-                    'type' => $this->type,
-                    'ownerId' => $this->getGalleryId()
+                    'type'    => $this->type,
+                    'ownerId' => $this->getGalleryId(),
                 ]
             )->execute();
 
@@ -361,7 +364,7 @@ class GalleryBehavior extends Behavior
 
         $galleryImage = new GalleryImage($this, ['id' => $id]);
 
-        if ($this->_images !== null) {
+        if ($this->_images !== NULL) {
             $this->_images[] = $galleryImage;
         }
 
@@ -452,7 +455,7 @@ class GalleryBehavior extends Behavior
         }
         $imagesToUpdate = [];
         // fill array of images for update
-        if ($this->_images !== null) {
+        if ($this->_images !== NULL) {
             // заполняет этот массив картинками, которые уже есть и ключи, которых пришли в post'е
             // если это редактирование, то это одна картинка
             $selected = array_combine($imageIds, $imageIds);
@@ -512,15 +515,15 @@ class GalleryBehavior extends Behavior
      *
      * @param string|null $oldExtension
      */
-    public function updateImages($oldExtension = null)
+    public function updateImages($oldExtension = NULL)
     {
-        $ids = array_map(function ($image) {
+        $ids = array_map(function($image) {
             /** @var GalleryImage $image */
             return $image->id;
         }, $this->getImages());
 
         foreach ($ids as $id) {
-            if ($oldExtension !== null) {
+            if ($oldExtension !== NULL) {
                 $newExtension = $this->extension;
                 $this->extension = $oldExtension;
                 $originalImage = Image::getImagine()
@@ -550,4 +553,5 @@ class GalleryBehavior extends Behavior
             }
         }
     }
+
 }
