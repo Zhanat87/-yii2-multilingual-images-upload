@@ -259,8 +259,7 @@ class GalleryBehavior extends Behavior
                 $options = [];
             }
 
-            $image
-                ->save($this->getFilePath($imageId, $version), $options);
+            $image->save($this->getFilePath($imageId, $version), $options);
         }
     }
 

@@ -58,7 +58,6 @@ class GalleryManagerAction extends Action
 
         $this->owner = call_user_func([$this->types[$this->type], 'findOne'], $pk);
         $this->behavior = $this->owner->getBehavior($this->behaviorName);
-
         switch ($action) {
             case 'delete':
                 return $this->actionDelete(Yii::$app->request->post('id'));
@@ -113,34 +112,45 @@ class GalleryManagerAction extends Action
     public function actionAjaxUpload()
     {
 
-        $imageFile = UploadedFile::getInstanceByName('image');
+        try {
+            $imageFile = UploadedFile::getInstanceByName('image');
 
-        $fileName = $imageFile->tempName;
-        $image = $this->behavior->addImage($fileName);
+            $fileName = $imageFile->tempName;
+            $image = $this->behavior->addImage($fileName);
 
-        // not "application/json", because  IE8 trying to save response as a file
+            // not "application/json", because  IE8 trying to save response as a file
 
-        Yii::$app->response->headers->set('Content-Type', 'text/html');
+            Yii::$app->response->headers->set('Content-Type', 'text/html');
 
-        Yii::$app->logging->pub(
-            'Upload image to {type} gallery with id: {id}',
-            '',
-            'galleryManager/main',
-            [
-                'id'   => $image->id,
-                'type' => $this->type,
-            ]
-        );
+            Yii::$app->logging->pub(
+                'Upload image to {type} gallery with id: {id}',
+                '',
+                'galleryManager/main',
+                [
+                    'id'   => $image->id,
+                    'type' => $this->type,
+                ]
+            );
 
-        return Json::encode(
-            [
-                'id'          => $image->id,
-                'rank'        => $image->rank,
-                'name'        => (string)$image->name,
-                'description' => (string)$image->description,
-                'preview'     => $image->getUrl('preview'),
-            ]
-        );
+            return Json::encode(
+                [
+                    'id'          => $image->id,
+                    'rank'        => $image->rank,
+                    'name'        => (string)$image->name,
+                    'description' => (string)$image->description,
+                    'preview'     => $image->getUrl('preview'),
+                ]
+            );
+        } catch (\Exception $e) {
+            return Json::encode(
+                [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]
+            );
+        }
     }
 
     /**
