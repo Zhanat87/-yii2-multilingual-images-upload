@@ -94,7 +94,7 @@ class GalleryManagerAction extends Action
             '',
             'galleryManager/main',
             [
-                'ids' => is_array($ids) ? join(',', $ids) : $ids,
+                'ids'  => is_array($ids) ? join(',', $ids) : $ids,
                 'type' => $this->type,
             ]
         );
@@ -127,19 +127,19 @@ class GalleryManagerAction extends Action
             '',
             'galleryManager/main',
             [
-                'id' => $image->id,
+                'id'   => $image->id,
                 'type' => $this->type,
             ]
         );
 
         return Json::encode(
-            array(
-                'id' => $image->id,
-                'rank' => $image->rank,
-                'name' => (string)$image->name,
+            [
+                'id'          => $image->id,
+                'rank'        => $image->rank,
+                'name'        => (string)$image->name,
                 'description' => (string)$image->description,
-                'preview' => $image->getUrl('preview'),
-            )
+                'preview'     => $image->getUrl('preview'),
+            ]
         );
     }
 
@@ -177,7 +177,7 @@ class GalleryManagerAction extends Action
             throw new HttpException(400, 'Nothing to save');
         }
         $images = $this->behavior->updateImagesData($imagesData);
-        $resp = array();
+        $resp = [];
         foreach ($images as $model) {
             // подправить имя
             $name = '';
@@ -188,26 +188,26 @@ class GalleryManagerAction extends Action
                     $name .= $language . ': ' . $value . ', ';
                 }
             }
-            $name = $name ? rtrim($name, ', ') : null;
+            $name = $name ? rtrim($name, ', ') : NULL;
             Yii::$app->logging->pub(
                 'Edit image in {type} gallery with id: {id}, set new name: {name}',
                 '',
                 'galleryManager/main',
                 [
-                    'id' => $model->id,
+                    'id'   => $model->id,
                     'type' => $this->type,
                     'name' => $name,
                 ]
             );
 
-            $resp[] = array(
-                'id' => $model->id,
-                'rank' => $model->rank,
-                'name' => $name,
-                'names' => $names, // массив с именами по языкам
+            $resp[] = [
+                'id'          => $model->id,
+                'rank'        => $model->rank,
+                'name'        => $name,
+                'names'       => $names, // массив с именами по языкам
                 'description' => (string)$model->description,
-                'preview' => $model->getUrl('preview'),
-            );
+                'preview'     => $model->getUrl('preview'),
+            ];
         }
 
         return Json::encode($resp);

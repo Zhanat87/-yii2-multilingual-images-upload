@@ -296,7 +296,7 @@ class GalleryBehavior extends Behavior
         $targetPath = implode('/', $parts);
         $path = realpath($targetPath);
         if (!$path && !is_dir($targetPath)) {
-            mkdir($targetPath, 0777, TRUE);
+            @mkdir($targetPath, 0777, TRUE);
         }
     }
 
@@ -313,12 +313,7 @@ class GalleryBehavior extends Behavior
         $dirPath = implode('/', $parts);
         @rmdir($dirPath);
 
-        $db = \Yii::$app->db;
-        $db->createCommand()
-            ->delete(
-                $this->tableName,
-                ['id' => $imageId]
-            )->execute();
+        GalleryImageModel::deleteAll('id = :id', ['id' => $imageId]);
     }
 
     public function deleteImages($imageIds)
@@ -339,23 +334,11 @@ class GalleryBehavior extends Behavior
 
     public function addImage($fileName)
     {
-        $db = \Yii::$app->db;
-        $db->createCommand()
-            ->insert(
-                $this->tableName,
-                [
-                    'type'    => $this->type,
-                    'ownerId' => $this->getGalleryId(),
-                ]
-            )->execute();
-
-        $id = $db->getLastInsertID('gallery_image_id_seq');
-        $db->createCommand()
-            ->update(
-                $this->tableName,
-                ['rank' => $id],
-                ['id' => $id]
-            )->execute();
+        $model = new GalleryImageModel;
+        $model->type = $this->type;
+        $model->ownerId = $this->getGalleryId();
+        $model->save();
+        $id = $model->id;
 
         $this->replaceImage($id, $fileName);
 
@@ -386,13 +369,7 @@ class GalleryBehavior extends Behavior
         foreach ($order as $k => $v) {
             $res[$k] = $orders[$i];
 
-            \Yii::$app->db->createCommand()
-                ->update(
-                    $this->tableName,
-                    ['rank' => $orders[$i]],
-                    ['id' => $k]
-                )->execute();
-
+            GalleryImageModel::updateAll(['rank' => $orders[$i]], ['id' => $k]);
             $i++;
         }
 
@@ -407,41 +384,6 @@ class GalleryBehavior extends Behavior
      */
     public function updateImagesData($imagesData)
     {
-        /*
-         array (size=1)
-          6 =>
-            array (size=4)
-              'en' =>
-                array (size=1)
-                  'name' => string 'asd' (length=3)
-              'ru' =>
-                array (size=1)
-                  'name' => string 'asd2' (length=4)
-              'ja' =>
-                array (size=1)
-                  'name' => string 'asd3' (length=4)
-              'zh' =>
-                array (size=1)
-                  'name' => string 'asd4' (length=4)
-         */
-//        var_dump($imagesData);
-//        exit;
-//        foreach ($imagesData as $id => $item) {
-//            $names = [];
-//            foreach ($item as $language => $v) {
-//                $names[$language] = $v['name'];
-//            }
-//            \Yii::$app->db->createCommand()
-//                ->update(
-//                    $this->behavior->tableName,
-//                    ['name' => serialize($names)],
-//                    ['id' => $id]
-//                )->execute();
-//        }
-        /*
-         * ['id' => ['name' => 'imageName', 'description' => 'some text']]
-         */
-//        $imageIds = array_keys($imagesData);
         // соберем id'и и имена этих картинок
         $imageIds = $imagesWithData = [];
         foreach ($imagesData as $id => $item) {
@@ -476,31 +418,11 @@ class GalleryBehavior extends Behavior
             }
         }
 
-
-//        foreach ($imagesToUpdate as $image) {
-//            if (isset($imagesData[$image->id]['name'])) {
-//                $image->name = $imagesData[$image->id]['name'];
-//            }
-//            if (isset($imagesData[$image->id]['description'])) {
-//                $image->description = $imagesData[$image->id]['description'];
-//            }
-//            \Yii::$app->db->createCommand()
-//                ->update(
-//                    $this->tableName,
-//                    ['name' => $image->name, 'description' => $image->description],
-//                    ['id' => $image->id]
-//                )->execute();
-//        }
         foreach ($imagesToUpdate as $image) {
             if (isset($imagesWithData[$image->id]['name'])) {
                 $image->name = serialize($imagesWithData[$image->id]['name']);
             }
-            \Yii::$app->db->createCommand()
-                ->update(
-                    $this->tableName,
-                    ['name' => $image->name],
-                    ['id' => $image->id]
-                )->execute();
+            GalleryImageModel::updateAll(['name' => $image->name], ['id' => $image->id]);
         }
 
         return $imagesToUpdate;

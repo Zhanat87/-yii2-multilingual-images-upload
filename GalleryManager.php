@@ -17,6 +17,7 @@ use yii\helpers\Url;
  */
 class GalleryManager extends Widget
 {
+
     /** @var ActiveRecord */
     public $model;
 
@@ -27,10 +28,9 @@ class GalleryManager extends Widget
     protected $behavior;
 
     /** @var string Route to gallery controller */
-    public $apiRoute = false;
+    public $apiRoute = FALSE;
 
-    public $options = array();
-
+    public $options = [];
 
     public function init()
     {
@@ -43,53 +43,52 @@ class GalleryManager extends Widget
     {
         $i18n = Yii::$app->i18n;
         $i18n->translations['galleryManager/*'] = [
-            'class' => 'yii\i18n\PhpMessageSource',
+            'class'          => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en-US',
-            'basePath' => '@zhanat/yii2/galleryManager/messages',
-            'fileMap' => [],
+            'basePath'       => '@zhanat/yii2/galleryManager/messages',
+            'fileMap'        => [],
         ];
     }
-
 
     /** Render widget */
     public function run()
     {
-        if ($this->apiRoute === null) {
+        if ($this->apiRoute === NULL) {
             throw new Exception('$apiRoute must be set.', 500);
         }
 
-        $images = array();
+        $images = [];
         foreach ($this->behavior->getImages() as $image) {
-            $images[] = array(
-                'id' => $image->id,
-                'rank' => $image->rank,
-                'name' => $image->name ? unserialize($image->name) : null,
-                'names' => $image->name ? unserialize($image->name) : null,
+            $images[] = [
+                'id'          => $image->id,
+                'rank'        => $image->rank,
+                'name'        => $image->name ? unserialize($image->name) : NULL,
+                'names'       => $image->name ? unserialize($image->name) : NULL,
                 'description' => (string)$image->description,
-                'preview' => $image->getUrl('preview'),
-            );
+                'preview'     => $image->getUrl('preview'),
+            ];
         }
 
         $baseUrl = [
             $this->apiRoute,
-            'type' => $this->behavior->type,
+            'type'         => $this->behavior->type,
             'behaviorName' => $this->behaviorName,
-            'galleryId' => $this->behavior->getGalleryId()
+            'galleryId'    => $this->behavior->getGalleryId(),
         ];
 
-        $opts = array(
-            'hasName' => $this->behavior->hasName ? true : false,
-            'hasDesc' => $this->behavior->hasDescription ? true : false,
-            'uploadUrl' => Url::to($baseUrl + ['action' => 'ajaxUpload']),
-            'deleteUrl' => Url::to($baseUrl + ['action' => 'delete']),
-            'updateUrl' => Url::to($baseUrl + ['action' => 'changeData']),
-            'arrangeUrl' => Url::to($baseUrl + ['action' => 'order']),
-            'nameLabel' => Yii::t('galleryManager/main', 'Name'),
+        $opts = [
+            'hasName'          => $this->behavior->hasName ? TRUE : FALSE,
+            'hasDesc'          => $this->behavior->hasDescription ? TRUE : FALSE,
+            'uploadUrl'        => Url::to($baseUrl + ['action' => 'ajaxUpload']),
+            'deleteUrl'        => Url::to($baseUrl + ['action' => 'delete']),
+            'updateUrl'        => Url::to($baseUrl + ['action' => 'changeData']),
+            'arrangeUrl'       => Url::to($baseUrl + ['action' => 'order']),
+            'nameLabel'        => Yii::t('galleryManager/main', 'Name'),
             'descriptionLabel' => Yii::t('galleryManager/main', 'Description'),
-            'photos' => $images,
-            'languages' => $this->behavior->languages,
-            'language' => mb_substr(Yii::$app->language, 0, 2),
-        );
+            'photos'           => $images,
+            'languages'        => $this->behavior->languages,
+            'language'         => mb_substr(Yii::$app->language, 0, 2),
+        ];
 
         $opts = Json::encode($opts);
         $view = $this->getView();

@@ -4,10 +4,12 @@ namespace zhanat\yii2\galleryManager;
 
 class GalleryImage
 {
+
     public $name;
     public $description;
     public $id;
     public $rank;
+
     /**
      * @var GalleryBehavior
      */
@@ -37,4 +39,5 @@ class GalleryImage
     {
         return $this->galleryBehavior->getUrl($this->id, $version);
     }
+
 }
