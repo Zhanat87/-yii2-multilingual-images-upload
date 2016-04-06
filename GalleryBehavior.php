@@ -295,7 +295,7 @@ class GalleryBehavior extends Behavior
         $parts = array_slice($parts, 0, count($parts) - 1);
         $targetPath = implode('/', $parts);
         $path = realpath($targetPath);
-        if (!$path) {
+        if (!$path && !is_dir($targetPath)) {
             mkdir($targetPath, 0777, TRUE);
         }
     }

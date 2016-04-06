@@ -33,8 +33,6 @@
     //Extending options:
     var opts = $.extend({}, galleryDefaults, options);
 
-    opts.languages = opts.languages.length ? $.map(opts.languages, function(el) { return el }) : [];
-
     //code
     var csrfParams = opts.csrfToken ? '&' + opts.csrfTokenName + '=' + opts.csrfToken : '';
     var photos = {}; // photo elements by id
@@ -68,6 +66,7 @@
     function createEditorElement(id, src, name, description) {
 
       if (opts.languages) {
+        opts.languages = $.map(opts.languages, function(el) { return el });
         var namesHtml = '';
         opts.languages.forEach(function (language) {
           var languageName = '';
@@ -469,6 +468,7 @@
       // переделаем показ имени фото
       var imageName = '';
       if (opts.languages) {
+          opts.languages = $.map(opts.languages, function(el) { return el });
           opts.languages.forEach(
               function(language) {
                   if (resp !== null && resp['name'] !== null && resp['name'][language].length) {
