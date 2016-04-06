@@ -466,6 +466,7 @@
       // переделаем показ имени фото
       var imageName = '';
       if (opts.languages) {
+          opts.languages = $.map(opts.languages, function(el) { return el });
           opts.languages.forEach(
               function(language) {
                   if (resp !== null && resp['name'] !== null && resp['name'][language].length) {
