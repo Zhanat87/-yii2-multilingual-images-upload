@@ -24,7 +24,7 @@ class m140930_003227_gallery_manager extends Migration
                 'description' => Schema::TYPE_TEXT,
                 'status' => Schema::TYPE_SMALLINT . '(1)',
                 'created_at' => Schema::TYPE_INTEGER,
-                'updated-at' => Schema::TYPE_INTEGER,
+                'updated_at' => Schema::TYPE_INTEGER,
             )
         );
     }
