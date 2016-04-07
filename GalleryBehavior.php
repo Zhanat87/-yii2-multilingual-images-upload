@@ -302,17 +302,18 @@ class GalleryBehavior extends Behavior
     /////////////////////////////// ========== Public Actions ============ ///////////////////////////
     public function deleteImage($imageId)
     {
-        foreach ($this->versions as $version => $fn) {
-            $filePath = $this->getFilePath($imageId, $version);
-            $this->removeFile($filePath);
+        $model = GalleryImageModel::findOne($imageId);
+        if($model->delete()){
+            foreach ($this->versions as $version => $fn) {
+                $filePath = $this->getFilePath($imageId, $version);
+                $this->removeFile($filePath);
+            }
+            $filePath = $this->getFilePath($imageId, 'original');
+            $parts = explode('/', $filePath);
+            $parts = array_slice($parts, 0, count($parts) - 1);
+            $dirPath = implode('/', $parts);
+            @rmdir($dirPath);
         }
-        $filePath = $this->getFilePath($imageId, 'original');
-        $parts = explode('/', $filePath);
-        $parts = array_slice($parts, 0, count($parts) - 1);
-        $dirPath = implode('/', $parts);
-        @rmdir($dirPath);
-
-        GalleryImageModel::deleteAll('id = :id', ['id' => $imageId]);
     }
 
     public function deleteImages($imageIds)

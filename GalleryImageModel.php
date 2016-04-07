@@ -79,6 +79,24 @@ class GalleryImageModel extends ActiveRecord
                     self::EVENT_BEFORE_UPDATE => ['updated_at'],
                 ],
             ],
+            [
+                'class' => ApproveBehavior::className(),
+                'relationFieldName' => 'ownerId',
+                'exceptFields' => [
+                    'created_at',
+                    'updated_at',
+                    'status',
+                ],
+                'types' => [
+                    'article'       => Article::className(),
+                    'category'      => Category::className(),
+                    'city'          => City::className(),
+                    'country'       => Country::className(),
+                    'district'      => District::className(),
+                    'guide'         => Guide::className(),
+                    'information'   => Information::className(),
+                ],
+            ]
         ];
     }
 
