@@ -11,6 +11,14 @@ namespace zhanat\yii2\galleryManager;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
+use backend\modules\article\models\Article;
+use backend\modules\category\models\Category;
+use backend\modules\city\models\City;
+use backend\modules\country\models\Country;
+use backend\modules\district\models\District;
+use backend\modules\guide\models\Guide;
+use backend\modules\information\models\Information;
+use common\behaviors\ApproveBehavior;
 
 /**
  * This is the model class for table "{{%gallery_image}}".
