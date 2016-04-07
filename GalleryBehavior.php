@@ -422,7 +422,9 @@ class GalleryBehavior extends Behavior
             if (isset($imagesWithData[$image->id]['name'])) {
                 $image->name = serialize($imagesWithData[$image->id]['name']);
             }
-            GalleryImageModel::updateAll(['name' => $image->name], ['id' => $image->id]);
+            $imageModel = GalleryImageModel::findOne($image->id);
+            $imageModel->name = $image->name;
+            $imageModel->save();
         }
 
         return $imagesToUpdate;
