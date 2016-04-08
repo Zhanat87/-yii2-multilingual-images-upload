@@ -129,4 +129,10 @@ class GalleryImageModel extends ActiveRecord
         return false;
     }
 
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        (new GalleryBehavior)->deleteImage($this->id);
+    }
+
 }
