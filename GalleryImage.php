@@ -19,7 +19,7 @@ class GalleryImage
      * @param GalleryBehavior $galleryBehavior
      * @param array           $props
      */
-    function __construct(GalleryBehavior $galleryBehavior, array $props)
+    function __construct(GalleryBehavior $galleryBehavior, $props)
     {
 
         $this->galleryBehavior = $galleryBehavior;
