@@ -93,7 +93,6 @@ class GalleryImageModel extends ActiveRecord
                 'exceptFields' => [
                     'created_at',
                     'updated_at',
-                    'status',
                 ],
                 'types' => [
                     'article'       => Article::className(),
