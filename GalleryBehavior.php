@@ -181,15 +181,24 @@ class GalleryBehavior extends Behavior
     public function getImages()
     {
         if ($this->_images === NULL) {
-            $query = new \yii\db\Query();
+            /*$query = new \yii\db\Query();
 
             $imagesData = $query
                 ->select(['id', 'name', 'description', 'rank'])
                 ->from($this->tableName)
                 ->where(['type' => $this->type, 'ownerId' => $this->getGalleryId()])
                 ->orderBy(['rank' => 'asc'])
-                ->all();
+                ->all();*/
 
+            $query = GalleryImageModel::find()->andWhere([
+                'type' => $this->type,
+                'ownerId' => $this->getGalleryId(),
+            ]);
+            $query->andWhere([
+                'not', ['status' => 4]
+            ]);  
+            $imagesData = $query->orderBy(['rank' => 'asc'])->all();
+            
             $this->_images = [];
             foreach ($imagesData as $imageData) {
                 $this->_images[] = new GalleryImage($this, $imageData);
